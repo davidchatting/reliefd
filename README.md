@@ -82,8 +82,11 @@ Standard XYZ tiles compatible with Leaflet, OpenLayers, Mapbox GL, etc.:
 L.tileLayer('http://localhost:3000/tiles/{z}/{x}/{y}.png').addTo(map);
 ```
 
-![Slippy tile z=12 x=2030 y=1295, the Tyne estuary at default settings](docs/tiles-example.png)
-*`/tiles/12/2030/1295.png` — the same Tyne estuary as the hero image, at default settings (`raw=false`). Coastal elevation here sits near 0m, which under the fixed −500–8500m range renders very dark (pixel values 14–17 of 255) — see `/contours.svg` below for the same spot with detail visible via line art instead of shading.*
+[`docs/tiles-example.png`](docs/tiles-example.png) — `/tiles/12/2030/1295.png`, the same Tyne
+estuary as the hero image, at default settings (`raw=false`). Coastal elevation here sits near
+0m, which under the fixed −500–8500m range renders very dark (pixel values 14–17 of 255) — see
+`/contours.svg` below for the same spot with detail visible via line art instead of shading, or
+open the linked image directly to see for yourself.
 
 #### Bounding-box terrain image
 
@@ -101,8 +104,11 @@ GET /terrain?lon=<longitude>&lat=<latitude>&radius=<km>&resolution=<n>&raw=<bool
 
 Returns a PNG centred on the given point.
 
-![Terrain image centred on the Tyne estuary, radius 5km, default settings](docs/terrain-example.png)
-*`/terrain?lon=-1.5&lat=55.0&radius=5` — `/terrain` has no default radius, so 5km (matching `/contours.svg`'s own default) is used here; `resolution` and `raw` are left at default. Same near-black result as `/tiles` above, for the same reason: coastal terrain near sea level under the fixed range.*
+[`docs/terrain-example.png`](docs/terrain-example.png) — `/terrain?lon=-1.5&lat=55.0&radius=5`,
+centred on the Tyne estuary. `/terrain` has no default radius, so 5km (matching
+`/contours.svg`'s own default) is used here; `resolution` and `raw` are left at default. Same
+near-black result as `/tiles` above, for the same reason: coastal terrain near sea level under
+the fixed range.
 
 ### SVG
 
@@ -204,8 +210,8 @@ Returns an SVG line chart of elevation along the great-circle path from the star
 
 When `curved` is enabled, each sample has the exact sagitta added — the height an arc rises above its chord, zero at both endpoints and maximum at the midpoint. A chord between two points on a sphere lies inside it, so the true surface between them actually rises above a straight line drawn between them by this amount (the same effect that limits radio/visual line-of-sight over distance); `curved=false` plots the raw elevations instead, ignoring Earth's shape entirely.
 
-![Terrain profile from the Tyne estuary to a nearby hill, barely visible at true scale](docs/line-example.svg)
-*`/line.svg?lon1=-1.5&lat1=55.0&lon2=-1.735&lat2=54.884` — from the estuary to the highest point (≈247m) found within 15km of it, so about as dramatic a profile as this area offers. Every other parameter is at default, including `heightScale=1` (true scale) — and at true scale it's still only 11px tall in an 800px-wide image. Real terrain is far flatter in profile than it looks on a map; that's exactly why `heightScale` exists (try `heightScale=20`).*
+![Terrain profile running north along the -1.5° meridian, from Weardale to just short of the Scottish border](docs/line-example.svg)
+*`/line.svg?lon1=-1.5&lat1=54.05&lon2=-1.5&lat2=55.95&curved=true&heightScale=20` — a longer, ~211km profile (`width` left at its default 800) chosen so curvature's contribution is actually significant rather than negligible: at the midpoint, the sagitta alone puts the curved sea-level baseline ≈872m below a straight chord between the endpoints — taller than any hill the previous example found within 15km of the Tyne estuary. `curved=true` is already the default; it's spelled out here for clarity — drop it (or set `curved=false` on the same URL) and that baseline flattens back to a straight line, ignoring Earth's shape entirely. `heightScale=20` is carried over from the suggestion above, so real terrain relief still reads clearly on top of the curve rather than the whole 211km profile collapsing to a hairline.*
 
 ### Skyline profile
 
@@ -234,10 +240,10 @@ The x-axis is bearing (0–360°) rather than distance, so the plotted line's va
 ![Skyline around a 15km circle centred on the Tyne estuary, exaggerated](docs/skyline-example.svg)
 *`/skyline.svg?lon=-1.5&lat=55.0&radius=15&heightScale=5` — the visible horizon in every direction from the estuary, out to 15km, with `heightScale` raised to 5 to make it visible at all (same true-scale flatness problem as above, otherwise).*
 
-The same data, bent around a ring instead of unrolled into a strip, and tilted into true isometric view (30° ground-line angle) — north at the top, the line starts there (marked) and runs clockwise. This isn't a server endpoint, just `p5js/skyline.js` re-projecting `/skyline.svg`'s own rendered output; see [`p5js/README.md`](p5js/README.md#skyline-viewer) for how, and `p5js/skyline.html` for the live version (retype coordinates to re-centre; no drag-to-pan like the other two viewers).
+The same data, bent around a ring instead of unrolled into a strip, and tilted into true isometric view (30° ground-line angle) — north at the top, the line starts there (marked) and runs clockwise. This isn't a server endpoint, just `p5js/skyline.js` re-projecting `/skyline.svg`'s own rendered output, one fetch per radius; see [`p5js/README.md`](p5js/README.md#skyline-viewer) for how, and `p5js/skyline.html` for the live version (retype coordinates to re-centre; no drag-to-pan like the other two viewers). `?radii=5,10,15` (comma-separated, replacing the single `?radius=`) draws several as concentric, proportionally-scaled rings in one image instead of just one.
 
-![The same skyline data, wrapped around a ring in isometric view, north at the top](docs/skyline-isometric-example.svg)
-*`p5js/skyline.html?lon=-1.5&lat=55.0&radius=15` — dashed ring is eye level; the solid line dips below it where the ground falls away (e.g. due east, across the estuary) and rises above it into the hills to the south-west.*
+![The same skyline data at three radii, wrapped around concentric rings in isometric view, north at the top](docs/skyline-isometric-example.svg)
+*`p5js/skyline.html?lon=-1.5&lat=55.0&radii=5,10,15` — three rings instead of one, each dashed ring its own eye-level baseline, each solid line the real skyline at that radius, plain black like every other line here. A small "Nkm" label sits at 12 o'clock, directly under each ring's own line, so radius alone (plus the label) is what tells them apart. The small filled ellipse at the centre marks the observer's own position, drawn as the same isometric shape as the rings rather than a screen-space circle, so it reads as sitting flat on the same ground plane. The ground genuinely falls away to the east (all three dip there, across the estuary) and rises into the hills to the south-west.*
 
 ### Line-of-sight
 

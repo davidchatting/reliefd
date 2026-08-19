@@ -595,7 +595,6 @@ app.get("/contours.svg", (req, res) => {
     }
 
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">` +
-      `<rect width="100%" height="100%" fill="#808080"/>` +
       `<g stroke="#000" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round">${body}</g>` +
       `</svg>`;
 

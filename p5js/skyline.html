@@ -50,10 +50,24 @@
       stroke-width: 1;
     }
 
+    .centre {
+      fill: #000;
+      stroke: #fff;
+      stroke-width: 1;
+    }
+
     .compass {
       font-family: monospace;
       font-size: 13px;
       fill: #999;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .radius-label {
+      font-family: monospace;
+      font-size: 11px;
+      fill: #777;
       text-anchor: middle;
       dominant-baseline: middle;
     }
@@ -141,8 +155,8 @@
     <label>Longitude
       <input id="lon-input" type="number" step="any" required>
     </label>
-    <label>Radius (km)
-      <input id="radius-input" type="number" step="any" min="0.5" max="200" required>
+    <label>Radii (km)
+      <input id="radius-input" type="text" placeholder="5, 10, 15" required>
     </label>
     <label>Bearings
       <input id="directions-input" type="number" step="1" min="8" max="720" required>
